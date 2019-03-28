@@ -13,6 +13,6 @@
         <property name="hibernate.connection.url">jdbc:hsqldb:mem:scrabble</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
 
-        <mapping class="model.EmployeeEntity"></mapping>
+        <mapping class="persistence.model.BoardEntity"></mapping>
     </session-factory>
 </hibernate-configuration>

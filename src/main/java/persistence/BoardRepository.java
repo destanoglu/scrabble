@@ -1,7 +1,7 @@
 package persistence;
 
 import exception.BoardNotFoundException;
-import model.EmployeeEntity;
+import persistence.model.BoardEntity;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -13,12 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 
 @Repository
-public class EmployeeRepository {
+public class BoardRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(EmployeeRepository.class);
+    private static final Logger log = LoggerFactory.getLogger(BoardRepository.class);
     @Autowired private HibernateUtil hibernateUtil;
 
-    public Long AddEmployee(EmployeeEntity employee) throws HibernateException{
+    public Long AddEmployee(BoardEntity employee) throws HibernateException{
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
@@ -34,13 +34,13 @@ public class EmployeeRepository {
         }
     }
 
-    public List<EmployeeEntity> ListBoards() throws HibernateException {
+    public List<BoardEntity> ListBoards() throws HibernateException {
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
-            List<EmployeeEntity> employees = session.createQuery("from EmployeeEntity").list();
-            for (Iterator<EmployeeEntity> iterator = employees.iterator(); iterator.hasNext();){
-                EmployeeEntity entity = iterator.next();
+            List<BoardEntity> employees = session.createQuery("from BoardEntity").list();
+            for (Iterator<BoardEntity> iterator = employees.iterator(); iterator.hasNext();){
+                BoardEntity entity = iterator.next();
                 log.info(entity.toString());
             }
             return employees;
@@ -52,11 +52,11 @@ public class EmployeeRepository {
         }
     }
 
-    public EmployeeEntity GetBoard(Long id) throws HibernateException, BoardNotFoundException {
+    public BoardEntity GetBoard(Long id) throws HibernateException, BoardNotFoundException {
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
-            EmployeeEntity employee = (EmployeeEntity) session.get(EmployeeEntity.class, id);
+            BoardEntity employee = (BoardEntity) session.get(BoardEntity.class, id);
             if (employee == null){
                 throw new BoardNotFoundException();
             }

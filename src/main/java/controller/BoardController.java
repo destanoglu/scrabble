@@ -2,34 +2,43 @@ package controller;
 
 import exception.BoardNotFoundException;
 import exception.RestException;
-import model.EmployeeEntity;
+import model.Board;
+import model.Move;
+import model.MoveDirection;
 import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import responseModel.CreationResponse;
-import service.EmployeeService;
+import service.BoardService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Path("/board")
 public class BoardController {
 
     private static final Logger log = LoggerFactory.getLogger(BoardController.class);
 
-    @Autowired private EmployeeService employeeService;
+    @Autowired private BoardService boardService;
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public CreationResponse createBoard() throws RestException {
         try {
-            EmployeeEntity newEntity = new EmployeeEntity();
-            newEntity.setLastName("asd");
-            newEntity.setFirstName("asda");
-            newEntity.setEmail("as@gmail.com");
-            Long id = employeeService.AddBoard(newEntity);
+            Map<Integer, List<Move>> moves = new HashMap<Integer, List<Move>>();
+            moves.put(1, Arrays.asList(
+                    new Move(MoveDirection.Horizontal, new Point(1, 1), "ali"),
+                    new Move(MoveDirection.Vertical, new Point(1, 1), "anne")));
+
+            Board theboard = new Board(1L, moves);
+
+            Long id = boardService.AddBoard(theboard);
             log.info("Created id = " + id);
             return new CreationResponse(id);
         } catch (HibernateException e){
@@ -40,9 +49,9 @@ public class BoardController {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<EmployeeEntity> listBoards() throws RestException {
+    public List<Board> listBoards() throws RestException {
         try{
-            return employeeService.ListBoards();
+            return boardService.ListBoards();
         } catch (HibernateException e){
             throw new RestException("Error listing boards", e);
         }
@@ -51,9 +60,9 @@ public class BoardController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public EmployeeEntity getBoard(@PathParam("id") Long id) throws RestException, BoardNotFoundException {
+    public Board getBoard(@PathParam("id") Long id) throws RestException, BoardNotFoundException {
         try{
-            return employeeService.GetBoard(id);
+            return boardService.GetBoard(id);
         } catch (HibernateException e){
             throw new RestException("Error reading board", e);
         }
