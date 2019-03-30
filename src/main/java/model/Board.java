@@ -1,8 +1,8 @@
 package model;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Board {
@@ -69,22 +69,27 @@ public class Board {
 
     public void AddMove(Integer sequence, Move move){
         if (moves.containsKey(sequence)){
-            moves.get(sequence).add(move);
+            List<Move> sequenceMoves = moves.get(sequence);
+            sequenceMoves.add(move);
         }
         else {
-            moves.put(sequence, Arrays.asList(move));
+            List<Move> newSequenceMoves = new ArrayList<>();
+            newSequenceMoves.add(move);
+            moves.put(sequence, newSequenceMoves);
         }
+        applyMoveToBoardInstance(move);
     }
 
     private void applyMoveToBoardInstance(Move move){
-        Integer offset = 0;
-        for (Character ch : move.getText().toCharArray()){
+        for (int i = 0; i < move.getText().length(); ++i){
             Point location = new Point(move.getInitialPoint());
             if (move.getDirection().equals(MoveDirection.Horizontal)){
-                location.move(location.x, location.y + offset);
-                this.instance.put(location, new BoardField(move.getDirection(), ch));
-                ++offset;
+                location.move(location.x, location.y + i);
             }
+            else{
+                location.move(location.x + i, location.y);
+            }
+            this.instance.put(location, new BoardField(move.getDirection(), move.getText().charAt(i)));
         }
     }
 }

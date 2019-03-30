@@ -13,6 +13,7 @@ import service.BoardService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class BoardController {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public CreationResponse createBoard() throws RestException {
+    public CreationResponse createBoard() throws RestException, IOException {
         try {
 //            List<Move> moves = new ArrayList<Move >();
 //            Move move1 = new Move(MoveDirection.Horizontal, new Point(1, 1), "ali", 1);
@@ -56,7 +57,7 @@ public class BoardController {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Board> listBoards() throws RestException {
+    public List<Board> listBoards() throws RestException, IOException, ClassNotFoundException {
         try{
             return boardService.ListBoards();
         } catch (HibernateException e){
@@ -67,7 +68,7 @@ public class BoardController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Board getBoard(@PathParam("id") Long id) throws RestException, BoardNotFoundException {
+    public Board getBoard(@PathParam("id") Long id) throws RestException, BoardNotFoundException, IOException, ClassNotFoundException {
         try{
             return boardService.GetBoard(id);
         } catch (HibernateException e){
@@ -79,12 +80,12 @@ public class BoardController {
     @Path("/{id}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Board addMovement(@PathParam("id") Long id, List<Move> moves) throws BoardNotFoundException, RestException {
+    public Board addMovement(@PathParam("id") Long id, List<Move> moves) throws BoardNotFoundException, RestException, IOException, ClassNotFoundException {
         try{
             List<model.Move> modelMoves = moves.stream().map(move -> move.MoveModel()).collect(Collectors.toList());
             return boardService.AddMovement(id, modelMoves);
         } catch (HibernateException e){
-            throw new RestException("Error reading board", e);
+            throw new RestException("Error modifying board", e);
         }
     }
 }

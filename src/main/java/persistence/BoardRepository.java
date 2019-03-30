@@ -1,13 +1,13 @@
 package persistence;
 
 import exception.BoardNotFoundException;
-import persistence.model.BoardEntity;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import persistence.model.BoardEntity;
 
 import java.util.Iterator;
 import java.util.List;
@@ -18,11 +18,11 @@ public class BoardRepository {
     private static final Logger log = LoggerFactory.getLogger(BoardRepository.class);
     @Autowired private HibernateUtil hibernateUtil;
 
-    public Long AddEmployee(BoardEntity employee) throws HibernateException{
+    public Long AddBoard(BoardEntity boardEntity) throws HibernateException{
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
-            Long id = (Long)session.save(employee);
+            Long id = (Long)session.save(boardEntity);
             session.getTransaction().commit();
             return id;
         } catch (HibernateException ex){
@@ -38,12 +38,12 @@ public class BoardRepository {
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
-            List<BoardEntity> employees = session.createQuery("from BoardEntity").list();
-            for (Iterator<BoardEntity> iterator = employees.iterator(); iterator.hasNext();){
+            List<BoardEntity> boards = session.createQuery("from BoardEntity").list();
+            for (Iterator<BoardEntity> iterator = boards.iterator(); iterator.hasNext();){
                 BoardEntity entity = iterator.next();
                 log.info(entity.toString());
             }
-            return employees;
+            return boards;
         } catch (HibernateException ex) {
             log.error(ex.toString());
             throw ex;
@@ -56,12 +56,12 @@ public class BoardRepository {
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
-            BoardEntity employee = (BoardEntity) session.get(BoardEntity.class, id);
-            if (employee == null){
+            BoardEntity boardEntity = (BoardEntity) session.get(BoardEntity.class, id);
+            if (boardEntity == null){
                 throw new BoardNotFoundException();
             }
 
-            return employee;
+            return boardEntity;
         } catch (HibernateException ex) {
             log.error(ex.toString());
             throw ex;
@@ -70,11 +70,12 @@ public class BoardRepository {
         }
     }
 
-    public void UpdateBoard(BoardEntity entity){
+    public void UpdateBoard(BoardEntity entity) {
         Session session = hibernateUtil.getSessionFactory().openSession();
         try{
             session.beginTransaction();
-            session.update(entity);
+            session.saveOrUpdate(entity);
+            session.flush();
             session.getTransaction().commit();
         }
         catch (HibernateException ex){

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import persistence.BoardRepository;
 import persistence.model.BoardEntity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,37 +16,39 @@ import java.util.List;
 public class BoardService {
     @Autowired private BoardRepository boardRepository;
 
-    public Long AddBoard(Board board){
+    public Long AddBoard(Board board) throws IOException {
         BoardEntity entity = new BoardEntity();
-        entity.setMoves(board.UnstructuredMoves());
-        entity.setInstance(board.getBoardInstance());
-        return boardRepository.AddEmployee(entity);
+        entity.setStructuredMoves(board.UnstructuredMoves());
+        entity.setStructuredInstance(board.getBoardInstance());
+        return boardRepository.AddBoard(entity);
     }
 
-    public List<Board> ListBoards(){
+    public List<Board> ListBoards() throws IOException, ClassNotFoundException {
         List<BoardEntity> entities = boardRepository.ListBoards();
         List<Board> boards = new ArrayList<Board>();
         for (int i = 0; i < entities.size(); ++i){
             BoardEntity entity = entities.get(i);
-            boards.add(new Board(entity.getBoardId(), entity.getMoves(), entity.getInstance()));
+            boards.add(new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance()));
         }
         return boards;
     }
 
-    public Board GetBoard(Long id) throws BoardNotFoundException {
+    public Board GetBoard(Long id) throws BoardNotFoundException, IOException, ClassNotFoundException {
         BoardEntity entity = boardRepository.GetBoard(id);
-        return new Board(entity.getBoardId(), entity.getMoves(), entity.getInstance());
+        return new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance());
     }
 
-    public Board AddMovement(Long id, List<Move>moves) throws BoardNotFoundException {
+    public Board AddMovement(Long id, List<Move>moves) throws BoardNotFoundException, IOException, ClassNotFoundException {
         BoardEntity entity = boardRepository.GetBoard(id);
-        Board board = new Board(entity.getBoardId(), entity.getMoves(), entity.getInstance());
-        Integer totalSequences = board.getMoves().size();
+        Board board = new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance());
+        Integer sequences = board.getMoves().size() + 1;
         for (Move move:moves) {
-            board.AddMove(totalSequences + 1, move);
+            move.setMainSequence(sequences);
+            board.AddMove(sequences, move);
         }
-        entity.setMoves(board.UnstructuredMoves());
-        entity.setInstance(board.getBoardInstance());
+
+        entity.setStructuredMoves(board.UnstructuredMoves());
+        entity.setStructuredInstance(board.getBoardInstance());
         boardRepository.UpdateBoard(entity);
         return board;
     }

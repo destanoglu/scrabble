@@ -3,12 +3,9 @@ package persistence.model;
 import model.BoardField;
 import model.Move;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.awt.*;
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -21,13 +18,13 @@ public class BoardEntity implements Serializable
     @GeneratedValue
     private Long boardId;
 
-    @org.hibernate.annotations.Type(type = "org.hibernate.type.SerializableToBlobType",
-            parameters = { @org.hibernate.annotations.Parameter( name = "MOVES", value = "java.util.ArrayList" ) })
-    private List<Move> moves;
+    @Lob
+    @Column(name = "moves", columnDefinition="BLOB", length = 999999)
+    private byte[] moves;
 
-    @org.hibernate.annotations.Type(type = "org.hibernate.type.SerializableToBlobType",
-            parameters = { @org.hibernate.annotations.Parameter( name = "INSTANCE", value = "java.util.HashMap" ) })
-    private Map<Point, BoardField> instance;
+    @Lob
+    @Column(name = "instance", columnDefinition="BLOB", length = 999999)
+    private byte[] instance;
 
     public Long getBoardId()
     {
@@ -39,20 +36,48 @@ public class BoardEntity implements Serializable
         this.boardId = employeeId;
     }
 
-    public List<Move> getMoves() {
+    public byte[] getMoves() {
         return moves;
     }
 
-    public void setMoves(List<Move> moves) {
+    public void setMoves(byte[] moves) {
         this.moves = moves;
     }
 
-    public Map<Point, BoardField> getInstance() {
+    public void setStructuredMoves(List<Move> moves) throws IOException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(moves);
+        this.moves = byteOut.toByteArray();
+    }
+
+    public List<Move> getStructuredMoves() throws IOException, ClassNotFoundException {
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(this.moves);
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        List<Move> data = (List<Move>) in.readObject();
+        return data;
+    }
+
+    public byte[] getInstance() {
         return instance;
     }
 
-    public void setInstance(Map<Point, BoardField> instance) {
+    public void setInstance(byte[] instance) {
         this.instance = instance;
+    }
+
+    public void setStructuredInstance(Map<Point, BoardField> instance) throws IOException {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteOut);
+        out.writeObject(instance);
+        this.instance = byteOut.toByteArray();
+    }
+
+    public Map<Point, BoardField> getStructuredInstance() throws IOException, ClassNotFoundException {
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(this.instance);
+        ObjectInputStream in = new ObjectInputStream(byteIn);
+        Map<Point, BoardField> data = (Map<Point, BoardField>) in.readObject();
+        return data;
     }
 
     @Override
