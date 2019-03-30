@@ -1,6 +1,8 @@
 package model;
 
-public class BoardField {
+import java.io.Serializable;
+
+public class BoardField implements Serializable {
     private MoveDirection direction;
     private Character character;
 

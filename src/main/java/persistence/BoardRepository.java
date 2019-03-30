@@ -69,4 +69,20 @@ public class BoardRepository {
             session.close();
         }
     }
+
+    public void UpdateBoard(BoardEntity entity){
+        Session session = hibernateUtil.getSessionFactory().openSession();
+        try{
+            session.beginTransaction();
+            session.update(entity);
+            session.getTransaction().commit();
+        }
+        catch (HibernateException ex){
+            log.error(ex.toString());
+            throw ex;
+        }
+        finally {
+            session.close();
+        }
+    }
 }

@@ -7,6 +7,7 @@ import persistence.BoardRepository;
 import persistence.HibernateUtil;
 import service.Application;
 import service.BoardService;
+import service.MoveService;
 
 @Configuration
 public class AppConfig {
@@ -33,5 +34,10 @@ public class AppConfig {
     @Bean
     public BoardController gameController(){
         return new BoardController();
+    }
+
+    @Bean
+    public MoveService moveService(){
+        return new MoveService();
     }
 }
