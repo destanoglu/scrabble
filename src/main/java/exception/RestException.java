@@ -15,7 +15,7 @@ public class RestException extends Exception implements ExceptionMapper<RestExce
     }
 
     public RestException(String message, Throwable cause) {
-        super(message, cause);
+        super(message + " : " + cause.getMessage(), cause);
     }
 
     public Response toResponse(RestException e) {

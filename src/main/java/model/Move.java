@@ -45,4 +45,9 @@ public class Move implements Serializable, Comparable<Move> {
     public int compareTo(Move o) {
         return getInnersequence() - o.getInnersequence();
     }
+
+    @Override
+    public String toString() {
+        return "Move seq: " + this.mainSequence + ", inner seq: " + this.innersequence + ", text: " + this.text;
+    }
 }

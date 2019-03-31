@@ -1,5 +1,7 @@
 package model;
 
+import exception.MovementException;
+
 import java.awt.*;
 import java.util.List;
 import java.util.*;
@@ -67,7 +69,7 @@ public class Board {
         return orderedMoves;
     }
 
-    public void AddMove(Integer sequence, Move move){
+    public void AddMove(Integer sequence, Move move) throws MovementException {
         if (moves.containsKey(sequence)){
             List<Move> sequenceMoves = moves.get(sequence);
             sequenceMoves.add(move);
@@ -80,7 +82,7 @@ public class Board {
         applyMoveToBoardInstance(move);
     }
 
-    private void applyMoveToBoardInstance(Move move){
+    private void applyMoveToBoardInstance(Move move) throws MovementException {
         for (int i = 0; i < move.getText().length(); ++i){
             Point location = new Point(move.getInitialPoint());
             if (move.getDirection().equals(MoveDirection.Horizontal)){
@@ -89,7 +91,16 @@ public class Board {
             else{
                 location.move(location.x + i, location.y);
             }
-            this.instance.put(location, new BoardField(move.getDirection(), move.getText().charAt(i)));
+            BoardField existingField = this.instance.get(location);
+            if (existingField == null){
+                this.instance.put(location, new BoardField(move.getDirection(), move.getText().charAt(i), 1));
+            }
+            else{
+                if (existingField.getCharacter() != move.getText().charAt(i)){
+                    throw new MovementException(move, "Conflicting with existing character");
+                }
+                existingField.incrementUsageCount();
+            }
         }
     }
 }

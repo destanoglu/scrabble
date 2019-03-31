@@ -1,13 +1,15 @@
 package configuration;
 
 import controller.BoardController;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import persistence.BoardRepository;
 import persistence.HibernateUtil;
-import service.Application;
-import service.BoardService;
-import service.MoveService;
+import service.*;
+
+import java.io.IOException;
 
 @Configuration
 public class AppConfig {
@@ -37,7 +39,31 @@ public class AppConfig {
     }
 
     @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public MoveService moveService(){
         return new MoveService();
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public MoveControl borderControl(){
+        return new BorderControl();
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public MoveControl placementControl(){
+        return new PlacementControl();
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public MoveControl meaningControl() throws IOException {
+        return new MeaningControl();
+    }
+
+    @Bean
+    public Integer boardSize(){
+        return 15;
     }
 }

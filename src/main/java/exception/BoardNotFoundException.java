@@ -15,7 +15,7 @@ public class BoardNotFoundException extends Exception implements ExceptionMapper
     }
 
     public BoardNotFoundException(String message, Throwable cause) {
-        super(message, cause);
+        super(message + " : " + cause.getMessage(), cause);
     }
 
     public Response toResponse(BoardNotFoundException ex) {

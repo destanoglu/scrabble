@@ -2,6 +2,7 @@ package service;
 
 import controller.BoardController;
 import exception.BoardNotFoundException;
+import exception.MovementException;
 import exception.RestException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -84,5 +85,6 @@ public class Application
         // Register the customer exception mappers
         configurable.register(RestException.class);
         configurable.register(BoardNotFoundException.class);
+        configurable.register(MovementException.class);
     }
 }

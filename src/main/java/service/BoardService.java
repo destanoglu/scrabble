@@ -1,6 +1,7 @@
 package service;
 
 import exception.BoardNotFoundException;
+import exception.MovementException;
 import model.Board;
 import model.Move;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,10 @@ import java.util.List;
 public class BoardService {
     @Autowired private BoardRepository boardRepository;
 
-    public Long AddBoard(Board board) throws IOException {
+    @Autowired private List<MoveControl> movementControls;
+
+    public Long AddBoard() throws IOException {
+        Board board = new Board();
         BoardEntity entity = new BoardEntity();
         entity.setStructuredMoves(board.UnstructuredMoves());
         entity.setStructuredInstance(board.getBoardInstance());
@@ -38,13 +42,17 @@ public class BoardService {
         return new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance());
     }
 
-    public Board AddMovement(Long id, List<Move>moves) throws BoardNotFoundException, IOException, ClassNotFoundException {
+    public Board AddMovement(Long id, List<Move>moves) throws BoardNotFoundException, IOException, ClassNotFoundException, MovementException {
         BoardEntity entity = boardRepository.GetBoard(id);
         Board board = new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance());
         Integer sequences = board.getMoves().size() + 1;
         for (Move move:moves) {
             move.setMainSequence(sequences);
             board.AddMove(sequences, move);
+
+            for (MoveControl ctrl: movementControls){
+                ctrl.Control(board, move);
+            }
         }
 
         entity.setStructuredMoves(board.UnstructuredMoves());
