@@ -80,7 +80,7 @@ public class MeaningControl implements MoveControl {
             ++endOffset;
         }
 
-        if (text.length() > 1 && !dictionary.containsKey(text)){
+        if (text.length() > 1 && !dictionary.containsKey(text.toLowerCase())){
             return false;
         }
         return true;
@@ -93,8 +93,9 @@ public class MeaningControl implements MoveControl {
             reader = new BufferedReader(new FileReader(MeaningControl.class.getResource("/scrabble_turkish_dictionary.txt").getPath()));
             String line = reader.readLine();
             while (line != null){
-                if (!dictionary.containsKey(line.trim())){
-                    dictionary.put(line.trim(), true);
+                line = line.toLowerCase().trim();
+                if (!dictionary.containsKey(line)){
+                    dictionary.put(line, true);
                 }
                 line = reader.readLine();
             }

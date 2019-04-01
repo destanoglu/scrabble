@@ -1,63 +1,52 @@
 package service;
 
 import exception.BoardNotFoundException;
-import exception.MovementException;
 import model.Board;
 import model.Move;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import persistence.BoardRepository;
-import persistence.model.BoardEntity;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BoardService {
     @Autowired private BoardRepository boardRepository;
 
-    @Autowired private List<MoveControl> movementControls;
-
     public Long AddBoard() throws IOException {
-        Board board = new Board();
-        BoardEntity entity = new BoardEntity();
-        entity.setStructuredMoves(board.UnstructuredMoves());
-        entity.setStructuredInstance(board.getBoardInstance());
-        return boardRepository.AddBoard(entity);
+        return boardRepository.CreateBoard();
     }
 
     public List<Board> ListBoards() throws IOException, ClassNotFoundException {
-        List<BoardEntity> entities = boardRepository.ListBoards();
-        List<Board> boards = new ArrayList<Board>();
-        for (int i = 0; i < entities.size(); ++i){
-            BoardEntity entity = entities.get(i);
-            boards.add(new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance()));
-        }
+        List<Board> boards = boardRepository.ListBoards();
         return boards;
     }
 
     public Board GetBoard(Long id) throws BoardNotFoundException, IOException, ClassNotFoundException {
-        BoardEntity entity = boardRepository.GetBoard(id);
-        return new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance());
+        return boardRepository.GetBoard(id);
     }
 
-    public Board AddMovement(Long id, List<Move>moves) throws BoardNotFoundException, IOException, ClassNotFoundException, MovementException {
-        BoardEntity entity = boardRepository.GetBoard(id);
-        Board board = new Board(entity.getBoardId(), entity.getStructuredMoves(), entity.getStructuredInstance());
-        Integer sequences = board.getMoves().size() + 1;
-        for (Move move:moves) {
-            move.setMainSequence(sequences);
-            board.AddMove(sequences, move);
-
-            for (MoveControl ctrl: movementControls){
-                ctrl.Control(board, move);
-            }
-        }
-
-        entity.setStructuredMoves(board.UnstructuredMoves());
-        entity.setStructuredInstance(board.getBoardInstance());
-        boardRepository.UpdateBoard(entity);
+    public Board Deactivate(Long id) throws BoardNotFoundException, IOException, ClassNotFoundException {
+        Board board = boardRepository.GetBoard(id);
+        board.setActivityStatus(false);
+        boardRepository.UpdateBoard(board);
         return board;
     }
+
+    public Map<Integer, List<Move>> SequenceMoves(Long id, Integer sequence) throws BoardNotFoundException, IOException, ClassNotFoundException {
+        Board board = boardRepository.GetBoard(id);
+        Map<Integer, List<Move>> sequentialMoves = new HashMap<>();
+        for (int i = 0; i < sequence; ++i){
+            List<Move> sequenceMoves = board.getMoves().get(i);
+            if (sequenceMoves == null){
+                break;
+            }
+            sequentialMoves.put(i, sequenceMoves);
+        }
+        return sequentialMoves;
+    }
+
 }

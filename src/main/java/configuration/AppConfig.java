@@ -40,8 +40,8 @@ public class AppConfig {
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public MoveService moveService(){
-        return new MoveService();
+    public MovementService moveService(){
+        return new MovementService();
     }
 
     @Bean
@@ -65,5 +65,17 @@ public class AppConfig {
     @Bean
     public Integer boardSize(){
         return 15;
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public BoardScoringService scoringSevice(){
+        return new BoardScoringService();
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public MovementService movementService(){
+        return new MovementService();
     }
 }

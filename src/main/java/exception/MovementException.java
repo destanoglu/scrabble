@@ -12,6 +12,10 @@ public class MovementException extends Exception implements ExceptionMapper<Move
     public MovementException() {
     }
 
+    public MovementException(String message) {
+        super(message);
+    }
+
     public MovementException(Move move, String message) {
         super(move.toString() + " " + message);
     }

@@ -2,6 +2,7 @@ package model;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.Locale;
 
 public class Move implements Serializable, Comparable<Move> {
     private MoveDirection direction;
@@ -11,9 +12,11 @@ public class Move implements Serializable, Comparable<Move> {
     private Integer innersequence;
 
     public Move(MoveDirection direction, Point initialPoint, String text, Integer innersequence) {
+        Locale trlocale= Locale.forLanguageTag("tr-TR");
+
         this.direction = direction;
         this.initialPoint = initialPoint;
-        this.text = text;
+        this.text = text.toLowerCase(trlocale);
         this.innersequence = innersequence;
     }
 
@@ -48,6 +51,6 @@ public class Move implements Serializable, Comparable<Move> {
 
     @Override
     public String toString() {
-        return "Move seq: " + this.mainSequence + ", inner seq: " + this.innersequence + ", text: " + this.text;
+        return "MoveRequest seq: " + this.mainSequence + ", inner seq: " + this.innersequence + ", text: " + this.text;
     }
 }

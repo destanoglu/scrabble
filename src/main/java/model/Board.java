@@ -11,25 +11,37 @@ public class Board {
     private Long boardId;
     private Map<Point, BoardField> instance;
     private Map<Integer, List<Move>> moves;
+    private boolean activityStatus;
 
-    public Board(Long boardId, List<Move> moves, Map<Point, BoardField> instance) {
+    public Board(Long boardId, List<Move> moves, Map<Point, BoardField> instance, boolean status ) {
         this.boardId = boardId;
         this.instance = instance;
         this.moves = OrderMoves(moves);
+        this.activityStatus = status;
     }
 
     public Board(List<Move> moves, Map<Point, BoardField> instance) {
         this.instance = instance;
         this.moves = OrderMoves(moves);
+        this.activityStatus = true;
     }
 
     public Board(){
         this.instance = new HashMap<>();
         this.moves = new HashMap<>();
+        this.activityStatus = true;
     }
 
     public Long getBoardId() {
         return boardId;
+    }
+
+    public void setActivityStatus(boolean activityStatus) {
+        this.activityStatus = activityStatus;
+    }
+
+    public boolean getActivityStatus(){
+        return this.activityStatus;
     }
 
     public Map<Point, BoardField> getBoardInstance() {
@@ -52,7 +64,7 @@ public class Board {
         Map<Integer, List<Move>> orderedMoves = new HashMap<Integer, List<Move>>();
 
         boolean doesSequenceExist = true;
-        Integer sequence = 1;
+        Integer sequence = 0;
         while(doesSequenceExist){
             Integer finalSequence = sequence;
             List<Move> sequenceMoves = moves.stream().filter(move -> move.getMainSequence().equals(finalSequence)).collect(Collectors.toList());
@@ -70,6 +82,10 @@ public class Board {
     }
 
     public void AddMove(Integer sequence, Move move) throws MovementException {
+        if (activityStatus == false){
+            throw new MovementException("Board is disabled");
+        }
+
         if (moves.containsKey(sequence)){
             List<Move> sequenceMoves = moves.get(sequence);
             sequenceMoves.add(move);

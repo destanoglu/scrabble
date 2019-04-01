@@ -4,7 +4,7 @@ import model.MoveDirection;
 
 import java.awt.*;
 
-public class Move {
+public class MoveRequest {
     private Integer innerSequence;
     private MoveDirection direction;
     private String text;
