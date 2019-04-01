@@ -27,19 +27,37 @@ public class MeaningControl implements MoveControl {
 
     @Override
     public void Control(Board board, Move move) throws MovementException {
-        EnsureMainSentence(move, board);
+
+        if (!EnsureSentence(move.getDirection(), move.getInitialPoint(), move.getText(), board)){
+            throw new MovementException(move, "Main sentence is not valid");
+        }
         EnsureAffectedSentences(move, board);
     }
 
     private void EnsureAffectedSentences(Move move, Board board) throws MovementException {
-    }
-
-    private void EnsureMainSentence(Move move, Board board) throws MovementException {
+        MoveDirection reverseDirection = move.getDirection() == MoveDirection.Horizontal ? MoveDirection.Vertical : MoveDirection.Horizontal;
         Point initial = move.getInitialPoint();
-        Map<Point, BoardField> instance = board.getBoardInstance();
-        String text = move.getText();
+
         Integer horizontalCoeff = move.getDirection() == MoveDirection.Horizontal ? 1 : 0;
         Integer verticalCoeff = move.getDirection() == MoveDirection.Vertical ? 1 : 0;
+
+        for (int i = 0; i < move.getText().length(); ++i){
+            if (move.getDirection() == MoveDirection.Horizontal){
+                if (!EnsureSentence(reverseDirection,
+                        new Point(initial.x + (verticalCoeff * i), initial.y + (horizontalCoeff * i)),
+                        String.valueOf(move.getText().charAt(i)),
+                        board)){
+                    throw new MovementException(move, "Affected sentence at " + i + " is not valid");
+                }
+            }
+        }
+    }
+
+    private boolean EnsureSentence(MoveDirection direction, Point initial, String text, Board board) {
+        Map<Point, BoardField> instance = board.getBoardInstance();
+
+        Integer horizontalCoeff = direction == MoveDirection.Horizontal ? 1 : 0;
+        Integer verticalCoeff = direction == MoveDirection.Vertical ? 1 : 0;
 
         // Find the beginning of the sentence
         Integer beginOffset = -1;
@@ -52,7 +70,7 @@ public class MeaningControl implements MoveControl {
             --beginOffset;
         }
 
-        Integer endOffset = move.getText().length();
+        Integer endOffset = text.length();
         while (true){
             BoardField field = instance.get(new Point(initial.x + (verticalCoeff * endOffset), initial.y + (horizontalCoeff * endOffset)));
             if (field == null){
@@ -62,9 +80,10 @@ public class MeaningControl implements MoveControl {
             ++endOffset;
         }
 
-        if (!dictionary.containsKey(text)){
-            throw new MovementException(move, "Wrong main sentence : " + text);
+        if (text.length() > 1 && !dictionary.containsKey(text)){
+            return false;
         }
+        return true;
     }
 
     private void InitializeDictionary() throws IOException {
