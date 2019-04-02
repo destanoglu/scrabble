@@ -1,7 +1,7 @@
 # SCRABBLE
 Non Spring Boot Java application with in memory HSQLDB.
 
-##API Documentation
+## API Documentation
 
 - To create a new game board use
 
@@ -113,5 +113,5 @@ Non Spring Boot Java application with in memory HSQLDB.
 ```
  
  
-##Usage
+## Usage
 As a Java newbie I use IntelliJ IDEA and its maven support to test, build and run the project.
