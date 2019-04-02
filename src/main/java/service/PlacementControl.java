@@ -13,7 +13,7 @@ public class PlacementControl implements MoveControl {
     private final Integer InitialMoveSize = 1;
     @Override
     public void Control(Board board, Move move) throws MovementException {
-        if (board.getMoves().size() == InitialMoveSize){
+        if (board.getMoves().size() == InitialMoveSize && board.getMoves().get(0).size() == InitialMoveSize){
             return;
         }
         Map<Point, BoardField> boardInstance = board.getBoardInstance();

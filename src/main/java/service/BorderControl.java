@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class BorderControl implements MoveControl {
 
-    @Autowired private Integer boardSize;
+    @Autowired private BoardBorder boardBorder;
 
     @Override
     public void Control(Board board, Move move) throws MovementException {
@@ -20,20 +20,20 @@ public class BorderControl implements MoveControl {
 
     private void EnsureInitialPoint(Move move) throws MovementException {
         Point initial = move.getInitialPoint();
-        if (initial.x < 0 || initial.x >= boardSize){
+        if (initial.x < 0 || initial.x >= boardBorder.getSize()){
             throw new MovementException(move, "Initial point is out of range");
         }
-        if (initial.y < 0 || initial.y >= boardSize){
+        if (initial.y < 0 || initial.y >= boardBorder.getSize()){
             throw new MovementException(move, "Initial point is out of range");
         }
     }
 
     private void EnsureBorders(Move move) throws MovementException {
         Point initial = move.getInitialPoint();
-        if (move.getDirection() == MoveDirection.Vertical && (initial.x + move.getText().length() - 1) >= boardSize){
+        if (move.getDirection() == MoveDirection.Vertical && (initial.x + move.getText().length() - 1) >= boardBorder.getSize()){
             throw new MovementException(move, "End point is out of range");
         }
-        if (move.getDirection() == MoveDirection.Horizontal && (initial.y + move.getText().length() - 1) >= boardSize){
+        if (move.getDirection() == MoveDirection.Horizontal && (initial.y + move.getText().length() - 1) >= boardBorder.getSize()){
             throw new MovementException(move, "End point is out of range");
         }
     }

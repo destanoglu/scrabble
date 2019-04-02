@@ -52,14 +52,6 @@ public class Board {
         return moves;
     }
 
-    public List<Move> UnstructuredMoves(){
-        List<Move> unorderedMoves = new ArrayList<>();
-        for (Map.Entry<Integer, List<Move>> entry : moves.entrySet()) {
-            unorderedMoves.addAll(entry.getValue());
-        }
-        return unorderedMoves;
-    }
-
     private Map<Integer, List<Move>> OrderMoves(List<Move> moves){
         Map<Integer, List<Move>> orderedMoves = new HashMap<Integer, List<Move>>();
 

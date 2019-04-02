@@ -18,7 +18,7 @@ public class BoardScoringService {
 
     private static final Logger log = LoggerFactory.getLogger(BoardScoringService.class);
     private Map<Character, Integer> scoreMap;
-    @Autowired private Integer boardSize;
+    @Autowired private BoardBorder boardBorder;
 
     @Autowired private BoardRepository boardRepository;
 
@@ -68,9 +68,9 @@ public class BoardScoringService {
     }
 
     private void scanHorizontalWords(List<Word> scores, Map<Point, BoardField> instance) {
-        for (int i = 0; i < boardSize; ++i){
+        for (int i = 0; i < boardBorder.getSize(); ++i){
             String text = "";
-            for (int j = 0; j < boardSize; ++j){
+            for (int j = 0; j < boardBorder.getSize(); ++j){
                 Point loc = new Point(i, j);
                 BoardField field = instance.get(loc);
                 if (field != null){
@@ -87,9 +87,9 @@ public class BoardScoringService {
     }
 
     private void scanVerticalWords(List<Word> scores, Map<Point, BoardField> instance) {
-        for (int j = 0; j < boardSize; ++j){
+        for (int j = 0; j < boardBorder.getSize(); ++j){
             String text = "";
-            for (int i = 0; i < boardSize; ++i){
+            for (int i = 0; i < boardBorder.getSize(); ++i){
                 Point loc = new Point(i, j);
                 BoardField field = instance.get(loc);
                 if (field != null){

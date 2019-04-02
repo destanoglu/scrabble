@@ -42,13 +42,11 @@ public class MeaningControl implements MoveControl {
         Integer verticalCoeff = move.getDirection() == MoveDirection.Vertical ? 1 : 0;
 
         for (int i = 0; i < move.getText().length(); ++i){
-            if (move.getDirection() == MoveDirection.Horizontal){
-                if (!EnsureSentence(reverseDirection,
-                        new Point(initial.x + (verticalCoeff * i), initial.y + (horizontalCoeff * i)),
-                        String.valueOf(move.getText().charAt(i)),
-                        board)){
-                    throw new MovementException(move, "Affected sentence at " + i + " is not valid");
-                }
+            if (!EnsureSentence(reverseDirection,
+                    new Point(initial.x + (verticalCoeff * i), initial.y + (horizontalCoeff * i)),
+                    String.valueOf(move.getText().charAt(i)),
+                    board)){
+                throw new MovementException(move, "Affected sentence at " + i + " is not valid");
             }
         }
     }
@@ -59,8 +57,10 @@ public class MeaningControl implements MoveControl {
         Integer horizontalCoeff = direction == MoveDirection.Horizontal ? 1 : 0;
         Integer verticalCoeff = direction == MoveDirection.Vertical ? 1 : 0;
 
-        // Find the beginning of the sentence
         Integer beginOffset = -1;
+        Integer endOffset = text.length();
+
+        // Find the beginning of the sentence
         while (true){
             BoardField field = instance.get(new Point(initial.x + (verticalCoeff * beginOffset), initial.y + (horizontalCoeff * beginOffset)));
             if (field == null){
@@ -70,7 +70,6 @@ public class MeaningControl implements MoveControl {
             --beginOffset;
         }
 
-        Integer endOffset = text.length();
         while (true){
             BoardField field = instance.get(new Point(initial.x + (verticalCoeff * endOffset), initial.y + (horizontalCoeff * endOffset)));
             if (field == null){

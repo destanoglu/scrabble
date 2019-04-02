@@ -63,8 +63,8 @@ public class AppConfig {
     }
 
     @Bean
-    public Integer boardSize(){
-        return 15;
+    public BoardBorder boardBorder(){
+        return new BoardBorder(15);
     }
 
     @Bean
