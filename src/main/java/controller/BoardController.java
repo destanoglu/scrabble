@@ -20,6 +20,7 @@ import service.MovementService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +38,11 @@ public class BoardController {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public CreationResponse createBoard() throws RestException, IOException {
+    public Response createBoard() throws RestException, IOException {
         try {
             Long id = boardService.AddBoard();
             log.info("A board instance is created with id = " + id);
-            return new CreationResponse(id);
+            return Response.status(Response.Status.CREATED).entity(new CreationResponse(id)).build();
         } catch (HibernateException e){
             log.error(e.toString());
             throw new RestException("Error adding board", e);
